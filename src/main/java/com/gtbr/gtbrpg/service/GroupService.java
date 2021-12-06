@@ -15,6 +15,7 @@ import com.gtbr.gtbrpg.repository.GroupPlayerRepository;
 import com.gtbr.gtbrpg.repository.GroupRepository;
 import com.gtbr.gtbrpg.util.Constants;
 import com.gtbr.gtbrpg.util.MessageUtil;
+import com.gtbr.gtbrpg.util.ParameterUtils;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.User;
 import org.json.JSONObject;
@@ -38,6 +39,7 @@ public class GroupService {
     private final ScheduledService scheduledService;
 
     public GroupPlayerDto createGroup(Map<String, Object> parameters, String discordIdCreator) {
+        ParameterUtils.validadeCreateGroupParameters(parameters);
         Player creator = playerService.getPlayerByDiscordId(discordIdCreator);
         Player leader;
         try {
@@ -45,7 +47,9 @@ public class GroupService {
         } catch (RuntimeException e) {
             leader = creator;
         }
-
+        groupRepository.findByName((String) parameters.get("nome")).ifPresent(group -> {
+            throw new RuntimeException("Ja existe um grupo com este nome.");
+        });
         Group group = Group.builder()
                 .createdAt(LocalDateTime.now())
                 .creator(creator)
@@ -147,17 +151,17 @@ public class GroupService {
 
     public void sendInvite(Integer groupId, List<User> mentionedUsers, User author) {
         if (mentionedUsers.size() > getGroupSizeLimit())
-            throw new RuntimeException("Esta convidando players de mais, o maximo permitido e: "+getGroupSizeLimit());
+            throw new RuntimeException("Esta convidando players de mais, o maximo permitido e: " + getGroupSizeLimit());
 
         GroupPlayerDto groupPlayerDto = findGroupById(groupId);
         Player inviter = playerService.getPlayerByDiscordId(author.getId());
-        MessageUtil.hasPermission(inviter, List.of(groupPlayerDto.group().getLeader()),true);
+        MessageUtil.hasPermission(inviter, List.of(groupPlayerDto.group().getLeader()), true);
 
         if ((mentionedUsers.size() + groupPlayerDto.playerList().size()) > getGroupSizeLimit())
             throw new RuntimeException(String.format("O numero de convites ultrapassa o limite permitido, seu grupo ja tem %s com esses novos convites ficariam em %s e o maximo permitido e: %s", groupPlayerDto.playerList().size(), mentionedUsers.size() + groupPlayerDto.playerList().size(), getGroupSizeLimit()));
 
         mentionedUsers.forEach(user -> {
-            requestInviteGroup(groupId, playerService.getPlayerByDiscordId(user.getId()) ,inviter);
+            requestInviteGroup(groupId, playerService.getPlayerByDiscordId(user.getId()), inviter);
         });
         scheduledService.processRequests();
     }
