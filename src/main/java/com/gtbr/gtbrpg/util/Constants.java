@@ -14,6 +14,8 @@ public abstract class Constants {
     public static final String ENTRAR_GRUPO = "ENTRARGRUPO";
     public static final String SAIR_GRUPO = "SAIRGRUPO";
     public static final String CONVIDAR_GRUPO = "CONVIDARGRUPO";
+    public static final String ACEITAR_REQUISICAO = "ACEITARREQUISICAO";
+    public static final String REJEITAR_REQUISICAO = "REJEITARREQUISICAO";
     public static final String RELOADING_EMOJI_CODE = "\uD83D\uDD04";
     public static final String DONE_EMOJI_CODE = "✅";
     public static final String ERROR_EMOJI_CODE = "\uD83D\uDEAB";

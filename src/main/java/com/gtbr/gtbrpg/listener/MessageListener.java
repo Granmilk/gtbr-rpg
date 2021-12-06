@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
@@ -57,5 +59,4 @@ public class MessageListener extends ListenerAdapter {
                 new EmbedBuilder().setColor(Color.GREEN).setTitle("Novo jogador registrado")
                         .setDescription("Seja bem vindo "+member.getUser().getAsMention()));
     }
-
 }

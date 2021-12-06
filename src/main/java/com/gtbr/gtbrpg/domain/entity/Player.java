@@ -29,4 +29,9 @@ public class Player {
     @OneToOne
     @JoinColumn
     private Status status;
+
+    @Column
+    @Transient
+    private boolean admin;
+
 }

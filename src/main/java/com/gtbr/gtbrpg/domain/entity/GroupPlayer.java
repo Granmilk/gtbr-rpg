@@ -19,7 +19,7 @@ public class GroupPlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column
-    private Long id;
+    private Integer id;
 
     @OneToOne
     @JoinColumn

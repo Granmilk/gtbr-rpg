@@ -22,4 +22,7 @@ public class Status {
 
     @Column
     private String name;
+
+    @Column
+    private String iconUrl;
 }
