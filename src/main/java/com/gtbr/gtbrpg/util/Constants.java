@@ -6,6 +6,7 @@ public abstract class Constants {
     public static final long RPG_ROLE_ID = 867545132856377364L;
     public static final Long TOKEN_ID = 1L;
     public static final String ORDEM_DE_INICIATIVA = "INICIATIVA";
+    public static final String MEU_GRUPO = "GRUPO";
     public static final String VER_GRUPO = "CONSULTARGRUPO";
     public static final String CRIAR_GRUPO = "CRIARGRUPO";
     public static final String EDITAR_GRUPO = "EDITARGRUPO";

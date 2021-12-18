@@ -189,4 +189,9 @@ public class GroupService {
                 }).getParameters()).getSizeLimit();
 
     }
+
+    public GroupPlayerDto findGroupByPlayer(String discordId) {
+        return findGroupById(groupPlayerRepository.findAllGroupsByPlayerId(playerService.getPlayerByDiscordId(discordId).getPlayerId()).get(0).getGroup().getGroupId());
+
+    }
 }

@@ -48,6 +48,10 @@ public class CommandHandler {
                 case ORDEM_DE_INICIATIVA -> {
 
                 }
+                case MEU_GRUPO -> {
+                    handleFindMyGroup(message);
+                    replaceEmote(message, RELOADING_EMOJI_CODE, DONE_EMOJI_CODE);
+                }
                 case VER_GRUPO -> {
                     handleFindGroup(message);
                     replaceEmote(message, RELOADING_EMOJI_CODE, DONE_EMOJI_CODE);
@@ -104,6 +108,24 @@ public class CommandHandler {
                             .setColor(Color.RED));
         }
 
+    }
+
+    private void handleFindMyGroup(Message message) {
+        GroupPlayerDto groupPlayerDto = groupService.findGroupByPlayer(message.getAuthor().getId());
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setTitle(groupPlayerDto.group().getName())
+                .setDescription(groupPlayerDto.group().getDescription())
+                .setColor(Color.MAGENTA)
+                .setThumbnail(groupPlayerDto.group().getThumbnail())
+                .setFooter("Preenchimento: " + String.format("(%s/%s)", groupPlayerDto.playerList().size(), groupPlayerDto.group().getSize()))
+                .addBlankField(false);
+
+        groupPlayerDto.playerList().forEach(player -> {
+            embedBuilder.addField("Membro: ", message.getJDA().getUserById(player.getDiscordId()).getAsMention() +
+                            (Objects.equals(groupPlayerDto.group().getLeader().getDiscordId(), player.getDiscordId()) ? " **Lider**" : "")
+                    , true);
+        });
+        MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 
     private void handleAcceptRequest(Message message) {
@@ -213,7 +235,7 @@ public class CommandHandler {
                     message.getGuild().addRoleToMember(message.getMember().getId(), role).queue();
                     EmbedBuilder embedBuilder = new EmbedBuilder()
                             .setTitle(role.getName())
-                            .setDescription(role.getAsMention() +": "+ groupPlayerDto.group().getDescription())
+                            .setDescription(role.getAsMention() + ": " + groupPlayerDto.group().getDescription())
                             .setColor(role.getColor())
                             .setThumbnail(groupPlayerDto.group().getThumbnail())
                             .setFooter("Preenchimento: " + String.format("(%s/%s)", groupPlayerDto.playerList().size(), groupPlayerDto.group().getSize()))
