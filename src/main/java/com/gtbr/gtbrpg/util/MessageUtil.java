@@ -1,15 +1,22 @@
 package com.gtbr.gtbrpg.util;
 
+import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
 import com.gtbr.gtbrpg.domain.entity.Player;
+import com.gtbr.gtbrpg.domain.enums.CommandType;
+
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.gtbr.gtbrpg.util.Constants.CROWN_EMOJI_CODE;
 import static com.gtbr.gtbrpg.util.GeneralUtils.in;
 
 public class MessageUtil {
@@ -31,8 +38,8 @@ public class MessageUtil {
                 .replace("*"+getCommandOfMessage(message), "");
     }
 
-    public static void hasPermission(Player userRequest, List<Player> usersAuthorized, boolean masterByPass){
-        if (!(masterByPass && userRequest.isAdmin()) && !in(userRequest.getDiscordId(), usersAuthorized.stream().map(Player::getDiscordId).collect(Collectors.toList())))
+    public static void hasPermission(Player userRequest, List<Player> authorizedUsers, boolean masterByPass){
+        if (!(masterByPass && userRequest.isAdmin()) && !in(userRequest.getDiscordId(), authorizedUsers.stream().map(Player::getDiscordId).collect(Collectors.toList())))
             throw new RuntimeException("Voce nao tem autorizacao para convidar pessoas para este grupo");
     }
 
@@ -50,5 +57,29 @@ public class MessageUtil {
 
     public static boolean hasRequestObservation(String command) {
         return command.contains(" ");
+    }
+
+
+    public static EmbedBuilder buildEmbedGroupMessage(GroupPlayerDto groupPlayerDto, Message message) {
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setTitle(groupPlayerDto.group().getName())
+                .setDescription(groupPlayerDto.group().getDescription())
+                .setColor(Color.MAGENTA)
+                .setThumbnail(groupPlayerDto.group().getThumbnail())
+                .setFooter("Preenchimento: " + String.format("(%s/%s)", groupPlayerDto.playerList().size(), groupPlayerDto.group().getSize()))
+                .addBlankField(false);
+
+        groupPlayerDto.playerList().forEach(player -> {
+            embedBuilder.addField("Membro: ", message.getJDA().getUserById(player.getDiscordId()).getAsMention() +
+                            (Objects.equals(groupPlayerDto.group().getLeader().getDiscordId(), player.getDiscordId()) ? " " + CROWN_EMOJI_CODE : ""),
+                    true);
+        });
+
+        return embedBuilder;
+    }
+
+    public static void replaceEmote(Message message, String oldEmoji, String newEmoji) {
+        message.removeReaction(oldEmoji).queue();
+        message.addReaction(newEmoji).queue();
     }
 }

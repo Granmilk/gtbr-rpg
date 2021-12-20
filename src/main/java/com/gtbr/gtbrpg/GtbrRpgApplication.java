@@ -7,6 +7,8 @@ import com.gtbr.gtbrpg.util.SpringContext;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -41,10 +43,9 @@ public class GtbrRpgApplication {
                 DIRECT_MESSAGES,
                 DIRECT_MESSAGE_REACTIONS,
                 DIRECT_MESSAGE_TYPING)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(getMessageListener())
                 .build();
-
-
     }
 
     @Bean

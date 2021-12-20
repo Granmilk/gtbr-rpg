@@ -50,6 +50,9 @@ public class Session {
     @Enumerated
     private SessionType sessionType;
 
+    @Column
+    private Boolean canList;
+
     @OneToOne
     @JoinColumn
     private Status sessionStatus;

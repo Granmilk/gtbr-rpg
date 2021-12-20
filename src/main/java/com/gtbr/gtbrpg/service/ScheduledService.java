@@ -6,6 +6,8 @@ import com.gtbr.gtbrpg.domain.configurations.requests.SubscribeRequestParameters
 import com.gtbr.gtbrpg.domain.entity.Request;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.JDA;
+
 import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,43 +28,49 @@ public class ScheduledService {
     public void processRequests() {
         List<Request> requestList = requestService.findAllToProcess();
         log.info("Processing requests. total: {}", requestList.size());
-        requestList.forEach(request -> {
-            if (Objects.isNull(request.getProcessedAt()) || LocalDateTime.now().isAfter(request.getProcessedAt().plus(1, ChronoUnit.HOURS))) {
-                switch (request.getRequestType()) {
-                    case SUBSCRIBE -> {
-                        SubscribeRequestParameters subscribeRequestParameters = SubscribeRequestParameters.of(request.getRequestParameter());
-                        GtbrRpgApplication.getJda()
-                                .getUserById(subscribeRequestParameters.getSubscribedGroup().getLeader().getDiscordId())
-                                .openPrivateChannel().queue(privateChannel -> {
-                                    privateChannel.sendMessage(String.format("%s pediu para se juntar ao grupo %s id #%s, para aceitar responda `*aceitarRequisicao #%s` ou se deseja rejeitar `*rejeitarRequisicao #%s <motivo>`",
-                                                    subscribeRequestParameters.getIssuer().getTag(),
-                                                    subscribeRequestParameters.getSubscribedGroup().getName(),
-                                                    subscribeRequestParameters.getSubscribedGroup().getGroupId(),
-                                                    request.getRequestId(),
-                                                    request.getRequestId()))
-                                            .queue();
-                                });
-                        requestService.process(request);
-                        log.info("Request processed, awaiting for response: {}", new JSONObject(request).toString());
-                    }
-                    case INVITE -> {
-                        InviteRequestParameters inviteRequestParameters = InviteRequestParameters.of(request.getRequestParameter());
-                        GtbrRpgApplication.getJda()
-                                .getUserById(inviteRequestParameters.getInvitedPlayer().getDiscordId())
-                                .openPrivateChannel().queue(privateChannel -> {
-                                    privateChannel.sendMessage(String.format("%s te convidou para o grupo %s id #%s, para aceitar responda `*aceitarRequisicao #%s` ou se deseja rejeitar `*rejeitarRequisicao #%s <motivo>`",
-                                                    inviteRequestParameters.getInvitedBy().getTag(),
-                                                    inviteRequestParameters.getInvitedTo().getName(),
-                                                    inviteRequestParameters.getInvitedTo().getGroupId(),
-                                                    request.getRequestId(),
-                                                    request.getRequestId()))
-                                            .queue();
-                                });
-                        requestService.process(request);
-                        log.info("Request processed, awaiting for response: {}", new JSONObject(request).toString());
+        JDA jda = GtbrRpgApplication.getJda();
+        try {
+            requestList.forEach(request -> {
+                if (Objects.isNull(request.getProcessedAt()) || LocalDateTime.now().isAfter(request.getProcessedAt().plus(1, ChronoUnit.HOURS))) {
+                    switch (request.getRequestType()) {
+                        case SUBSCRIBE -> {
+                            SubscribeRequestParameters subscribeRequestParameters = SubscribeRequestParameters.of(request.getRequestParameter());
+                            Objects.requireNonNull(jda
+                                    .getUserById(subscribeRequestParameters.getSubscribedGroup().getLeader().getDiscordId()), "Discord returning a null user! cannot open private channel with the user")
+                                    .openPrivateChannel().queue(privateChannel -> {
+                                        privateChannel.sendMessage(String.format("%s pediu para juntar-se ao grupo %s id #%s, para aceitar responda `*aceitarRequisicao #%s` ou se deseja rejeitar `*rejeitarRequisicao #%s <motivo>`",
+                                                        subscribeRequestParameters.getIssuer().getTag(),
+                                                        subscribeRequestParameters.getSubscribedGroup().getName(),
+                                                        subscribeRequestParameters.getSubscribedGroup().getGroupId(),
+                                                        request.getRequestId(),
+                                                        request.getRequestId()))
+                                                .queue();
+                                    });
+                            requestService.process(request);
+                            log.info("Request processed, awaiting for response: {}", new JSONObject(request).toString());
+                        }
+                        case INVITE -> {
+                            InviteRequestParameters inviteRequestParameters = InviteRequestParameters.of(request.getRequestParameter());
+                            Objects.requireNonNull(jda.getGuildById(inviteRequestParameters.getInvitedPlayer().getGuildId())
+                                            .getMemberById(inviteRequestParameters.getInvitedPlayer().getDiscordId())
+                                            .getUser(), "Discord returning a null user! cannot open private channel with the user")
+                                    .openPrivateChannel().queue(privateChannel -> {
+                                        privateChannel.sendMessage(String.format("%s te convidou para o grupo %s id #%s, para aceitar responda `*aceitarRequisicao #%s` ou se deseja rejeitar `*rejeitarRequisicao #%s <motivo>`",
+                                                        inviteRequestParameters.getInvitedBy().getTag(),
+                                                        inviteRequestParameters.getInvitedTo().getName(),
+                                                        inviteRequestParameters.getInvitedTo().getGroupId(),
+                                                        request.getRequestId(),
+                                                        request.getRequestId()))
+                                                .queue();
+                                    });
+                            requestService.process(request);
+                            log.info("Request processed, awaiting for response: {}", new JSONObject(request).toString());
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (NullPointerException e) {
+            log.error("{}", e.getMessage());
+        }
     }
 }

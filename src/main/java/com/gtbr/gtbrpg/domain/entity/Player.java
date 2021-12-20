@@ -26,6 +26,9 @@ public class Player {
     @Column
     private String discordId;
 
+    @Column
+    private String guildId;
+
     @OneToOne
     @JoinColumn
     private Status status;

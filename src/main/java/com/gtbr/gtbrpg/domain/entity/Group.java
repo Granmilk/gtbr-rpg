@@ -2,13 +2,14 @@ package com.gtbr.gtbrpg.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,6 +43,12 @@ public class Group {
     private Integer size;
 
     @Column
+    private String roleId;
+
+    @Column
     private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime closedAt;
 
 }

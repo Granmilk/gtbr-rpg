@@ -30,6 +30,7 @@ public class PlayerService {
                     .discordId(member.getId())
                     .name(member.getEffectiveName())
                     .tag(member.getUser().getAsTag())
+                    .guildId(member.getGuild().getId())
                     .status(Status.builder().id(1).build())
                     .build());
         }

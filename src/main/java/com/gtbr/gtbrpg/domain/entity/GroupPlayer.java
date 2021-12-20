@@ -2,13 +2,13 @@ package com.gtbr.gtbrpg.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +30,8 @@ public class GroupPlayer {
     private Player player;
 
     @Column
-    private LocalDateTime since;
+    private LocalDateTime joinedAt;
 
+    @Column
+    private LocalDateTime leaveAt;
 }
