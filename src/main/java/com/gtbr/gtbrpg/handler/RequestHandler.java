@@ -13,6 +13,7 @@ import static com.gtbr.gtbrpg.util.MessageUtil.replaceEmote;
 
 import com.gtbr.gtbrpg.domain.configurations.requests.InviteRequestParameters;
 import com.gtbr.gtbrpg.domain.configurations.requests.SubscribeRequestParameters;
+import com.gtbr.gtbrpg.domain.configurations.requests.utils.RequestBuildParameterUtil;
 import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
 import com.gtbr.gtbrpg.domain.entity.Request;
 import com.gtbr.gtbrpg.domain.enums.RequestStatus;
@@ -61,7 +62,7 @@ public class RequestHandler implements CommandTypeHandler{
         Request request = requestService.update(requestId.contains(" ") ? Integer.parseInt(requestId.split(" ")[0]) : Integer.parseInt(requestId), RequestStatus.RECUSADA);
         switch (request.getRequestType()) {
             case INVITE -> {
-                InviteRequestParameters inviteRequestParameters = InviteRequestParameters.of(request.getRequestParameter());
+                InviteRequestParameters inviteRequestParameters = RequestBuildParameterUtil.of(request.getRequestParameter(), InviteRequestParameters.class);
                 message.getJDA()
                         .getUserById(inviteRequestParameters.getInvitedBy().getDiscordId())
                         .openPrivateChannel()
@@ -73,7 +74,7 @@ public class RequestHandler implements CommandTypeHandler{
                                         Objects.isNull(request.getReviewerObservation()) ? "" : request.getReviewerObservation())).queue());
             }
             case SUBSCRIBE -> {
-                SubscribeRequestParameters subscribeRequestParameters = SubscribeRequestParameters.of(request.getRequestParameter());
+                SubscribeRequestParameters subscribeRequestParameters = RequestBuildParameterUtil.of(request.getRequestParameter(), SubscribeRequestParameters.class);
                 message.getJDA()
                         .getUserById(subscribeRequestParameters.getIssuer().getDiscordId())
                         .openPrivateChannel()

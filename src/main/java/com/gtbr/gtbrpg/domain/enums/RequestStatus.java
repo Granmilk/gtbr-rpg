@@ -8,5 +8,6 @@ import lombok.Getter;
 public enum RequestStatus {
     ACEITA,
     RECUSADA,
-    SEM_RESPOSTA
+    SEM_RESPOSTA,
+    MESSAGE
 }

@@ -4,6 +4,7 @@ import com.gtbr.gtbrpg.domain.configurations.GroupLimitConfiguration;
 import com.gtbr.gtbrpg.domain.configurations.requests.InviteRequestParameters;
 import com.gtbr.gtbrpg.domain.configurations.requests.SubscribeRequestParameters;
 import com.gtbr.gtbrpg.domain.configurations.requests.UpdateGroupRequestParameters;
+import com.gtbr.gtbrpg.domain.configurations.requests.utils.RequestBuildParameterUtil;
 import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
 import com.gtbr.gtbrpg.domain.entity.Group;
 import com.gtbr.gtbrpg.domain.entity.GroupPlayer;
@@ -122,7 +123,7 @@ public class GroupService {
     public GroupPlayerDto acceptGroupInvite(Request request) {
         return switch (request.getRequestType()) {
             case INVITE -> {
-                InviteRequestParameters inviteRequestParameters = InviteRequestParameters.of(request.getRequestParameter());
+                InviteRequestParameters inviteRequestParameters = RequestBuildParameterUtil.of(request.getRequestParameter(), InviteRequestParameters.class);
                 GroupPlayerDto groupPlayerDto = findGroupById(inviteRequestParameters.getInvitedTo().getGroupId());
                 if (groupPlayerDto.playerList().size() >= groupPlayerDto.group().getSize())
                     throw new RuntimeException("Grupo cheio!");
@@ -140,7 +141,7 @@ public class GroupService {
                 yield new GroupPlayerDto(groupPlayerDto.group(), players, null);
             }
             case SUBSCRIBE -> {
-                SubscribeRequestParameters subscribeRequestParameters = SubscribeRequestParameters.of(request.getRequestParameter());
+                SubscribeRequestParameters subscribeRequestParameters = RequestBuildParameterUtil.of(request.getRequestParameter(), SubscribeRequestParameters.class);
                 GroupPlayerDto groupPlayerDto = findGroupById(subscribeRequestParameters.getSubscribedGroup().getGroupId());
                 if (groupPlayerDto.playerList().size() >= groupPlayerDto.group().getSize())
                     throw new RuntimeException("Grupo cheio!");

@@ -34,7 +34,6 @@ public class Player {
     private Status status;
 
     @Column
-    @Transient
     private boolean admin;
 
 }

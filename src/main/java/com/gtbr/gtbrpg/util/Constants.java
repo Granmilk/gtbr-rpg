@@ -23,6 +23,8 @@ public abstract class Constants {
     public static final String FECHAR_SESSAO = "FECHARSESSAO";
     public static final String ENTRAR_SESSAO = "ENTRARSESSAO";
     public static final String SAIR_SESSAO = "SAIRSESSAO";
+    public static final String INICIAR_SESSAO = "INICIARSESSAO";
+    public static final String FINALIZAR_SESSAO = "FINALIZARSESSAO";
 
     public static final String ACEITAR_REQUISICAO = "ACEITARREQUISICAO";
     public static final String REJEITAR_REQUISICAO = "REJEITARREQUISICAO";
