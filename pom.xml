@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.gtbr</groupId>
     <artifactId>gtbr-rpg</artifactId>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
     <name>gtbr-rpg</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -95,14 +95,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
