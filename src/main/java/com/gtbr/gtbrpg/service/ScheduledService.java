@@ -6,16 +6,12 @@ import com.gtbr.gtbrpg.domain.configurations.requests.MessageRequestParameter;
 import com.gtbr.gtbrpg.domain.configurations.requests.SubscribeRequestParameters;
 import com.gtbr.gtbrpg.domain.configurations.requests.utils.RequestBuildParameterUtil;
 import com.gtbr.gtbrpg.domain.entity.Request;
-import com.gtbr.gtbrpg.domain.entity.Session;
 import com.gtbr.gtbrpg.domain.enums.RequestStatus;
 import com.gtbr.gtbrpg.domain.enums.RequestType;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
-
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +28,8 @@ public class ScheduledService {
     private final RequestService requestService;
     private final SessionService sessionService;
 
-    private final Integer PROCESS_REQUEST_FIXED_DELAY = 30000;
-    private final Integer NOTIFICATIONS_FIXED_DELAY = 60000;
+    private static final Integer PROCESS_REQUEST_FIXED_DELAY = 30000;
+    private static final Integer NOTIFICATIONS_FIXED_DELAY = 60000;
 
     @Scheduled(fixedDelay = PROCESS_REQUEST_FIXED_DELAY)
     public void processRequests() {
