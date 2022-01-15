@@ -1,32 +1,15 @@
 package com.gtbr.gtbrpg.handler;
 
 
-import com.gtbr.gtbrpg.domain.configurations.requests.InviteRequestParameters;
-import com.gtbr.gtbrpg.domain.configurations.requests.SubscribeRequestParameters;
-import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
-import com.gtbr.gtbrpg.domain.entity.GroupPlayer;
-import com.gtbr.gtbrpg.domain.entity.Request;
 import com.gtbr.gtbrpg.domain.enums.CommandType;
-import com.gtbr.gtbrpg.domain.enums.RequestStatus;
-import com.gtbr.gtbrpg.service.GroupService;
 import com.gtbr.gtbrpg.service.MessageService;
-import com.gtbr.gtbrpg.service.RequestService;
 import com.gtbr.gtbrpg.util.MessageUtil;
 import com.gtbr.gtbrpg.util.SpringContext;
-
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
 
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.MatchResult;
 
 import static com.gtbr.gtbrpg.util.Constants.*;
 import static com.gtbr.gtbrpg.util.MessageUtil.replaceEmote;

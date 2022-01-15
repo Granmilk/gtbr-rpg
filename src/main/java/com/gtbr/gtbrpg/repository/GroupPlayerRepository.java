@@ -1,10 +1,6 @@
 package com.gtbr.gtbrpg.repository;
 
 import com.gtbr.gtbrpg.domain.entity.GroupPlayer;
-import com.gtbr.gtbrpg.domain.entity.Player;
-
-import javax.swing.text.html.Option;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

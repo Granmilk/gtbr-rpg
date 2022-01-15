@@ -1,11 +1,9 @@
 package com.gtbr.gtbrpg.domain.entity;
 
 import com.gtbr.gtbrpg.domain.enums.SessionType;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;

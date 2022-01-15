@@ -18,10 +18,8 @@ import com.gtbr.gtbrpg.repository.GroupRepository;
 import com.gtbr.gtbrpg.util.Constants;
 import com.gtbr.gtbrpg.util.MessageUtil;
 import com.gtbr.gtbrpg.util.ParameterUtils;
-
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.User;
-
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +39,6 @@ public class GroupService {
     private final GroupPlayerRepository groupPlayerRepository;
     private final GroupRepository groupRepository;
     private final RequestService requestService;
-    private final ScheduledService scheduledService;
 
     public GroupPlayerDto createGroup(Map<String, Object> parameters, String discordIdCreator) {
         ParameterUtils.validadeCreateGroupParameters(parameters);
@@ -181,7 +178,6 @@ public class GroupService {
         mentionedUsers.forEach(user -> {
             requestInviteGroup(group.getGroupId(), playerService.getPlayerByDiscordId(user.getId()), inviter);
         });
-        scheduledService.processRequests();
     }
 
     public Request requestInviteGroup(Integer groupId, Player invitedPlayer, Player invitedBy) {

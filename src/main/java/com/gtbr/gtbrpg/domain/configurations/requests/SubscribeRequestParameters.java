@@ -2,7 +2,10 @@ package com.gtbr.gtbrpg.domain.configurations.requests;
 
 import com.gtbr.gtbrpg.domain.entity.Group;
 import com.gtbr.gtbrpg.domain.entity.Player;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

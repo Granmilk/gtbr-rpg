@@ -1,38 +1,23 @@
 package com.gtbr.gtbrpg.service;
 
-import ch.qos.logback.core.util.DatePatternToRegexUtil;
-import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.entities.User;
-
-import static com.gtbr.gtbrpg.domain.enums.RequestType.MESSAGE;
-
 import com.gtbr.gtbrpg.domain.configurations.requests.MessageRequestParameter;
 import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
 import com.gtbr.gtbrpg.domain.dto.SessionRecord;
-import com.gtbr.gtbrpg.domain.entity.Group;
-import com.gtbr.gtbrpg.domain.entity.Player;
-import com.gtbr.gtbrpg.domain.entity.Request;
-import com.gtbr.gtbrpg.domain.entity.Session;
-import com.gtbr.gtbrpg.domain.entity.Status;
+import com.gtbr.gtbrpg.domain.entity.*;
 import com.gtbr.gtbrpg.domain.enums.RequestStatus;
-import com.gtbr.gtbrpg.domain.enums.RequestType;
 import com.gtbr.gtbrpg.domain.enums.SessionType;
 import com.gtbr.gtbrpg.repository.SessionRepository;
+import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.time.DateUtils;
-import org.json.JSONObject;
-import org.springframework.stereotype.Service;
+import static com.gtbr.gtbrpg.domain.enums.RequestType.MESSAGE;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +27,6 @@ public class SessionService {
     private final PlayerService playerService;
     private final GroupService groupService;
     private final RequestService requestService;
-    private final ScheduledService scheduledService;
 
     public Session createSession(Map<String, Object> parameterMap, String discordId) {
         Player creator = playerService.getPlayerByDiscordId(discordId);
@@ -190,7 +174,6 @@ public class SessionService {
                                     LocalDateTime.now(), LocalDateTime.now())).toString())
                             .build()));
 
-            scheduledService.processRequests();
         }
 
         return sessionRepository.save(session);

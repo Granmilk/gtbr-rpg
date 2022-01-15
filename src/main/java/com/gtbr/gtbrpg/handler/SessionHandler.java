@@ -1,19 +1,16 @@
 package com.gtbr.gtbrpg.handler;
 
-import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-
-import org.springframework.stereotype.Service;
-
-import static com.gtbr.gtbrpg.util.Constants.*;
-import static com.gtbr.gtbrpg.util.MessageUtil.addDefaultReaction;
-import static com.gtbr.gtbrpg.util.MessageUtil.replaceEmote;
-
 import com.gtbr.gtbrpg.domain.dto.SessionRecord;
 import com.gtbr.gtbrpg.domain.entity.Session;
 import com.gtbr.gtbrpg.service.SessionService;
 import com.gtbr.gtbrpg.util.MessageUtil;
+import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import org.springframework.stereotype.Service;
+
+import static com.gtbr.gtbrpg.util.Constants.*;
+import static com.gtbr.gtbrpg.util.MessageUtil.addDefaultReaction;
 
 @Service
 @RequiredArgsConstructor

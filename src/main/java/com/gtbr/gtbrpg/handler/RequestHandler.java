@@ -1,16 +1,5 @@
 package com.gtbr.gtbrpg.handler;
 
-import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-
-import static com.gtbr.gtbrpg.util.Constants.ACEITAR_REQUISICAO;
-import static com.gtbr.gtbrpg.util.Constants.DONE_EMOJI_CODE;
-import static com.gtbr.gtbrpg.util.Constants.REJEITAR_REQUISICAO;
-import static com.gtbr.gtbrpg.util.Constants.RELOADING_EMOJI_CODE;
-import static com.gtbr.gtbrpg.util.MessageUtil.buildEmbedGroupMessage;
-import static com.gtbr.gtbrpg.util.MessageUtil.replaceEmote;
-
 import com.gtbr.gtbrpg.domain.configurations.requests.InviteRequestParameters;
 import com.gtbr.gtbrpg.domain.configurations.requests.SubscribeRequestParameters;
 import com.gtbr.gtbrpg.domain.configurations.requests.utils.RequestBuildParameterUtil;
@@ -21,12 +10,18 @@ import com.gtbr.gtbrpg.service.GroupService;
 import com.gtbr.gtbrpg.service.MessageService;
 import com.gtbr.gtbrpg.service.RequestService;
 import com.gtbr.gtbrpg.util.MessageUtil;
+import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import org.springframework.stereotype.Service;
+import static com.gtbr.gtbrpg.util.Constants.*;
+import static com.gtbr.gtbrpg.util.MessageUtil.buildEmbedGroupMessage;
+import static com.gtbr.gtbrpg.util.MessageUtil.replaceEmote;
 
 @Service
 @RequiredArgsConstructor

@@ -4,9 +4,7 @@ import com.gtbr.gtbrpg.domain.entity.Request;
 import com.gtbr.gtbrpg.domain.enums.RequestStatus;
 import com.gtbr.gtbrpg.domain.enums.RequestType;
 import com.gtbr.gtbrpg.repository.RequestRepository;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

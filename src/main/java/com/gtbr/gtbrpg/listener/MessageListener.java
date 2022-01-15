@@ -6,7 +6,6 @@ import com.gtbr.gtbrpg.handler.MemberHandler;
 import com.gtbr.gtbrpg.util.Constants;
 import com.gtbr.gtbrpg.util.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.ReadyEvent;

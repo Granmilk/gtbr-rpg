@@ -2,9 +2,9 @@ package com.gtbr.gtbrpg.domain.enums;
 
 import lombok.Getter;
 
-import static com.gtbr.gtbrpg.util.Constants.*;
-
 import java.util.Arrays;
+
+import static com.gtbr.gtbrpg.util.Constants.*;
 
 @Getter
 public enum CommandType {

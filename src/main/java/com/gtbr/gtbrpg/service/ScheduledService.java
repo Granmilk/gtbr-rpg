@@ -28,10 +28,7 @@ public class ScheduledService {
     private final RequestService requestService;
     private final SessionService sessionService;
 
-    private static final Integer PROCESS_REQUEST_FIXED_DELAY = 30000;
-    private static final Integer NOTIFICATIONS_FIXED_DELAY = 60000;
-
-    @Scheduled(fixedDelay = PROCESS_REQUEST_FIXED_DELAY)
+    @Scheduled(fixedDelay = 30000)
     public void processRequests() {
         List<Request> requestList = requestService.findAllToProcess();
         log.info("Processing requests. total: {}", requestList.size());
@@ -94,7 +91,7 @@ public class ScheduledService {
         }
     }
 
-    @Scheduled(fixedDelay = NOTIFICATIONS_FIXED_DELAY)
+    @Scheduled(fixedDelay = 60000)
     public void createNotifications() {
         log.info("Starting creation of notifications of sessions");
         sessionService.findAllSessionsToNotifications().forEach(session -> {

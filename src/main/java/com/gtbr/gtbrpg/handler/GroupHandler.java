@@ -1,36 +1,16 @@
 package com.gtbr.gtbrpg.handler;
 
+import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
+import com.gtbr.gtbrpg.domain.entity.GroupPlayer;
+import com.gtbr.gtbrpg.service.GroupService;
+import com.gtbr.gtbrpg.service.MessageService;
+import com.gtbr.gtbrpg.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-
-import static com.gtbr.gtbrpg.util.Constants.ACEITAR_REQUISICAO;
-import static com.gtbr.gtbrpg.util.Constants.CONVIDAR_GRUPO;
-import static com.gtbr.gtbrpg.util.Constants.CRIAR_GRUPO;
-import static com.gtbr.gtbrpg.util.Constants.CROWN_EMOJI_CODE;
-import static com.gtbr.gtbrpg.util.Constants.DONE_EMOJI_CODE;
-import static com.gtbr.gtbrpg.util.Constants.EDITAR_GRUPO;
-import static com.gtbr.gtbrpg.util.Constants.ENTRAR_GRUPO;
-import static com.gtbr.gtbrpg.util.Constants.FECHAR_GRUPO;
-import static com.gtbr.gtbrpg.util.Constants.MEU_GRUPO;
-import static com.gtbr.gtbrpg.util.Constants.REJEITAR_REQUISICAO;
-import static com.gtbr.gtbrpg.util.Constants.RELOADING_EMOJI_CODE;
-import static com.gtbr.gtbrpg.util.Constants.SAIR_GRUPO;
-import static com.gtbr.gtbrpg.util.Constants.VER_GRUPO;
-import static com.gtbr.gtbrpg.util.MessageUtil.buildEmbedGroupMessage;
-import static com.gtbr.gtbrpg.util.MessageUtil.replaceEmote;
-
-import com.gtbr.gtbrpg.domain.configurations.requests.InviteRequestParameters;
-import com.gtbr.gtbrpg.domain.configurations.requests.SubscribeRequestParameters;
-import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
-import com.gtbr.gtbrpg.domain.entity.GroupPlayer;
-import com.gtbr.gtbrpg.domain.entity.Request;
-import com.gtbr.gtbrpg.domain.enums.RequestStatus;
-import com.gtbr.gtbrpg.service.GroupService;
-import com.gtbr.gtbrpg.service.MessageService;
-import com.gtbr.gtbrpg.util.MessageUtil;
+import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -38,7 +18,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.stereotype.Service;
+import static com.gtbr.gtbrpg.util.Constants.*;
+import static com.gtbr.gtbrpg.util.MessageUtil.buildEmbedGroupMessage;
+import static com.gtbr.gtbrpg.util.MessageUtil.replaceEmote;
 
 @Service
 @RequiredArgsConstructor

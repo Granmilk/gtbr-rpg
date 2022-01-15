@@ -1,16 +1,14 @@
 package com.gtbr.gtbrpg.repository;
 
-import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
 import com.gtbr.gtbrpg.domain.entity.Session;
 import com.gtbr.gtbrpg.domain.enums.SessionType;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SessionRepository extends CrudRepository<Session, Integer> {
