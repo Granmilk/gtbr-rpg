@@ -8,9 +8,11 @@ import com.gtbr.gtbrpg.domain.enums.RequestStatus;
 import com.gtbr.gtbrpg.domain.enums.SessionType;
 import com.gtbr.gtbrpg.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -40,17 +42,40 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
+    public Session updateSession(Map<String, Object> paramatersMap, String discordId, Integer sessionId) {
+        Player creator = playerService.getPlayerByDiscordId(discordId);
+
+        if (!creator.isAdmin()) throw new RuntimeException("Você não tem permissão para criar uma sessão");
+
+        validateUpdateSessionParameters(paramatersMap);
+
+        Session session = mergeSession(buildSessionByParameters(paramatersMap), sessionRepository.findById(sessionId).orElseThrow());
+
+        return sessionRepository.save(session);
+    }
+
+    @SneakyThrows
+    private Session mergeSession(Session sessionFromParams, Session session) {
+        for (Field declaredField : session.getClass().getDeclaredFields()) {
+            declaredField.setAccessible(true);
+            if (!declaredField.isSynthetic() && Objects.nonNull(declaredField.get(sessionFromParams))){
+                declaredField.set(session, declaredField.get(sessionFromParams));
+            }
+            declaredField.setAccessible(false);
+        }
+        return session;
+    }
+
     private Session buildSessionByParameters(Map<String, Object> parameterMap) {
         return Session.builder()
                 .title((String) parameterMap.get("titulo"))
                 .description((String) parameterMap.get("descricao"))
-                .scheduledTo(parseToLocalDateTime((String) parameterMap.get("data")))
-                .sessionType(SessionType.valueOf((String) parameterMap.get("tipo")))
-                .scheduledAt(LocalDateTime.now())
+                .scheduledTo(parameterMap.containsKey("data") ? parseToLocalDateTime((String) parameterMap.get("data")) : null)
+                .sessionType(parameterMap.containsKey("tipo") ? SessionType.valueOf((String) parameterMap.get("tipo")) : null)
                 .sessionStatus(Status.builder().id(1).build())
                 .thumbnail((String) parameterMap.get("thumbnail"))
                 .canList(parameterMap.containsKey("podeConsultar")
-                        ? (Boolean) parameterMap.get("podeConsultar") : Boolean.TRUE)
+                        ?  Boolean.valueOf(parameterMap.get("podeConsultar").toString().toLowerCase()) : Boolean.TRUE)
                 .build();
     }
 
@@ -58,6 +83,21 @@ public class SessionService {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy-HH:mm");
         TemporalAccessor temporalAccessor = dateTimeFormatter.parse(date);
         return LocalDateTime.from(temporalAccessor);
+    }
+
+    private void validateUpdateSessionParameters(Map<String, Object> parameterMap) {
+        if (parameterMap.containsKey("sessionId")) throw new RuntimeException("O campo `sessionId` nao pode ser alterado");
+
+        if (parameterMap.containsKey("data")) {
+            try {
+                String date = (String) parameterMap.get("data");
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy-HH:mm");
+                TemporalAccessor temporalAccessor = dateTimeFormatter.parse(date);
+                LocalDateTime.from(temporalAccessor);
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao formatar a data, o padrão correto é: dd/MM/yyyy-HH:mm");
+            }
+        }
     }
 
     private void validateCreateSessionParameters(Map<String, Object> parameterMap) {
@@ -181,5 +221,56 @@ public class SessionService {
 
     public List<Session> findAllSessionsToNotifications() {
         return sessionRepository.findAvailableSessionsForNextDays(LocalDateTime.now(), LocalDateTime.now().plusDays(1L));
+    }
+
+    public Session start(Integer sessionId, String userId) {
+        Player player = playerService.getPlayerByDiscordId(userId);
+        if (!player.isAdmin()) throw new RuntimeException("Somente o mestre pode iniciar sessoes");
+
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> {
+            throw new RuntimeException("Sessao inexistente");
+        });
+
+        if (Objects.nonNull(session.getStarted())) throw new RuntimeException("Sessao ja iniciada");
+
+        session.setStarted(LocalDateTime.now());
+        sessionRepository.save(session);
+
+        return session;
+    }
+
+    public void saveThreadId(String threadId, Integer sessionId) {
+        Optional<Session> sessionOptional = sessionRepository.findById(sessionId);
+
+        sessionOptional.ifPresent(session -> {
+            session.setThreadId(threadId);
+            sessionRepository.save(session);
+        });
+
+    }
+
+    public Session finish(Integer sessionId, String userId) {
+        Player player = playerService.getPlayerByDiscordId(userId);
+        if (!player.isAdmin()) throw new RuntimeException("Somente o mestre pode finalizar sessoes");
+
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> {
+            throw new RuntimeException("Sessao inexistente");
+        });
+
+        if (Objects.nonNull(session.getFinished())) throw new RuntimeException("Sessao ja finalizada");
+
+        session.setFinished(LocalDateTime.now());
+        sessionRepository.save(session);
+
+        return session;
+    }
+
+    public Session findSessionById(Integer sessionId, String userId) {
+        Player player = playerService.getPlayerByDiscordId(userId);
+        if (!player.isAdmin()) throw new RuntimeException("Somente o mestre pode consultar sessoes");
+
+        return sessionRepository.findById(sessionId).orElseThrow(() -> {
+            throw new RuntimeException("Sessao inexistente");
+        });
     }
 }

@@ -10,6 +10,6 @@ public class MessageService {
     }
 
     public static void sendEmbbedMessage(MessageChannel channel, EmbedBuilder embedBuilder) {
-        channel.sendMessage(embedBuilder.build()).queue();
+        channel.sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }

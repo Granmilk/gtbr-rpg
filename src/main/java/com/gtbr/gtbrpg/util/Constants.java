@@ -26,6 +26,8 @@ public abstract class Constants {
     public static final String INICIAR_SESSAO = "INICIARSESSAO";
     public static final String FINALIZAR_SESSAO = "FINALIZARSESSAO";
 
+    public static final String AJUDA = "AJUDA";
+
     public static final String ACEITAR_REQUISICAO = "ACEITARREQUISICAO";
     public static final String REJEITAR_REQUISICAO = "REJEITARREQUISICAO";
 
@@ -34,6 +36,7 @@ public abstract class Constants {
     public static final String ERROR_EMOJI_CODE = "\uD83D\uDEAB";
     public static final String WHAT_EMOJI_CODE = "❓";
     public static final String CROWN_EMOJI_CODE = ":crown:";
+
 
     private Constants(){}
 

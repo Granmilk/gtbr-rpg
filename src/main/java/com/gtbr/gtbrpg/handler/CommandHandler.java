@@ -20,11 +20,13 @@ public class CommandHandler {
     private final GroupHandler groupHandler;
     private final SessionHandler sessionHandler;
     private final RequestHandler requestHandler;
+    private final HelpHandler helpHandler;
 
     public CommandHandler() {
         this.groupHandler = SpringContext.getBean(GroupHandler.class);
         this.sessionHandler = SpringContext.getBean(SessionHandler.class);
         this.requestHandler = SpringContext.getBean(RequestHandler.class);
+        this.helpHandler = SpringContext.getBean(HelpHandler.class);
     }
 
     public void handle(Message message) {
@@ -35,6 +37,7 @@ public class CommandHandler {
                 case GROUP -> groupHandler.handle(command, message);
                 case SESSION -> sessionHandler.handle(command, message);
                 case REQUEST -> requestHandler.handle(command, message);
+                case HELP -> helpHandler.handle(command, message);
                 default -> {
                     replaceEmote(message, RELOADING_EMOJI_CODE, WHAT_EMOJI_CODE);
                     MessageService.sendMessage(message.getChannel(), "Comando nao reconhecido!");

@@ -68,7 +68,7 @@ public class GroupHandler implements CommandTypeHandler{
 
     private void handleFindMyGroup(Message message) {
         GroupPlayerDto groupPlayerDto = groupService.findGroupByPlayer(message.getAuthor().getId());
-        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message);
+        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 
@@ -126,14 +126,14 @@ public class GroupHandler implements CommandTypeHandler{
 
     private void handleUpdateGroup(Message message) {
         GroupPlayerDto groupPlayerDto = groupService.updateGroup(message.getAuthor().getId(), MessageUtil.getParamatersMap(message, MessageUtil.getCommandOfMessage(message)));
-        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message);
+        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 
     private void handleFindGroup(Message message) {
         String groupId = message.getContentRaw().trim().replace("*" + MessageUtil.getCommandOfMessage(message), "").split(" ")[1];
         GroupPlayerDto groupPlayerDto = groupService.findGroupById(Integer.valueOf(groupId));
-        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message);
+        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 
@@ -146,7 +146,7 @@ public class GroupHandler implements CommandTypeHandler{
                 .setColor(Color.red)
                 .setPermissions(List.of(Permission.EMPTY_PERMISSIONS)).queue(role -> {
                     message.getGuild().addRoleToMember(message.getMember().getId(), role).queue();
-                    EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message);
+                    EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
                     MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
                     groupService.addRoleId(groupPlayerDto.group().getGroupId(), role.getId());
                 });

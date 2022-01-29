@@ -48,7 +48,7 @@ public class RequestHandler implements CommandTypeHandler{
         String requestId = MessageUtil.removePrefixAndCommand(message).trim().replace("#", "");
         Request request = requestService.update(Integer.valueOf(requestId), RequestStatus.ACEITA);
         GroupPlayerDto groupPlayerDto = groupService.acceptGroupInvite(request);
-        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message);
+        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 

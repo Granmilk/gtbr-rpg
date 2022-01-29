@@ -4,9 +4,12 @@ import com.gtbr.gtbrpg.GtbrRpgApplication;
 import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
 import com.gtbr.gtbrpg.domain.entity.Player;
 import com.gtbr.gtbrpg.domain.entity.Session;
+import com.gtbr.gtbrpg.domain.enums.CommandDetails;
+import com.gtbr.gtbrpg.domain.enums.CommandTypeHelp;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
@@ -58,7 +61,7 @@ public class MessageUtil {
     }
 
 
-    public static EmbedBuilder buildEmbedGroupMessage(GroupPlayerDto groupPlayerDto, Message message) {
+    public static EmbedBuilder buildEmbedGroupMessage(GroupPlayerDto groupPlayerDto, JDA jda) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle(groupPlayerDto.group().getName())
                 .setDescription(groupPlayerDto.group().getDescription())
@@ -68,7 +71,7 @@ public class MessageUtil {
                 .addBlankField(false);
 
         groupPlayerDto.playerList().forEach(player -> {
-            embedBuilder.addField("Membro: ", message.getJDA().getUserById(player.getDiscordId()).getAsMention() +
+            embedBuilder.addField("Membro: ", jda.getUserById(player.getDiscordId()).getAsMention() +
                             (Objects.equals(groupPlayerDto.group().getLeader().getDiscordId(), player.getDiscordId()) ? " " + CROWN_EMOJI_CODE : ""),
                     true);
         });
@@ -99,7 +102,7 @@ public class MessageUtil {
                         .addField("Sessão para", "Um jogador", true)
                         .addField("Jogador", Objects.nonNull(session.getPlayer())
                                 ? jda.getGuildById(session.getPlayer().getGuildId()).getMemberById(session.getPlayer().getDiscordId()).getAsMention()
-                                : String.format("Para se registrar digite `*registrarSessao #%s`", session.getSessionId()), true);
+                                : String.format("Para se registrar digite `*entrarSessao #%s`", session.getSessionId()), true);
 
             }
             case GROUP -> {
@@ -107,7 +110,7 @@ public class MessageUtil {
                         .addField("Sessão para", "Um grupo", true)
                         .addField("Grupo", Objects.nonNull(session.getGroup())
                                 ? jda.getRoleById(session.getGroup().getRoleId()).getAsMention()
-                                : String.format("Para registrar seu grupo digite `*registrarSessao #%s`", session.getSessionId()), true);
+                                : String.format("Para registrar seu grupo digite `*entrarSessao #%s`", session.getSessionId()), true);
             }
         }
 
@@ -129,6 +132,27 @@ public class MessageUtil {
     }
 
     public static Integer getDeafaultIdNumberFromMessage(Message message) {
-        return Integer.valueOf(removePrefixAndCommand(message).replace("#", "").trim());
+        return Integer.valueOf(removePrefixAndCommand(message).replace("#", "").trim().split(" ")[0].trim());
+    }
+
+    public static String getCommandWithId(Message message) {
+        String[] strings = message.getContentRaw().split(" ");
+        return strings[0] + " " + strings[1];
+    }
+
+    public static List<MessageEmbed> buildEmbedHelpMessage() {
+        EmbedBuilder embedBuilderGroup = new EmbedBuilder();
+        EmbedBuilder embedBuilderSession = new EmbedBuilder();
+
+        embedBuilderGroup.setTitle("Comandos de grupo").setDescription("Todos os comandos devem conter o prefixo `*`").setColor(Color.ORANGE);
+        embedBuilderSession.setTitle("Comandos de sessao").setDescription("Todos os comandos devem conter o prefixo `*`").setColor(Color.BLUE);
+
+        for (CommandDetails commandDetail : CommandTypeHelp.GROUP.getCommandDetails()) {
+            embedBuilderGroup.addField(commandDetail.getCommand(), commandDetail.getDescription(), true);
+        }
+        for (CommandDetails commandDetail : CommandTypeHelp.SESSION.getCommandDetails()) {
+            embedBuilderSession.addField(commandDetail.getCommand(), commandDetail.getDescription(), true);
+        }
+        return List.of(embedBuilderGroup.build(), embedBuilderSession.build());
     }
 }

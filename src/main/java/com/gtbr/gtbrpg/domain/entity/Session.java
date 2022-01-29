@@ -29,6 +29,9 @@ public class Session {
     private String description;
 
     @Column
+    private String threadId;
+
+    @Column
     private LocalDateTime scheduledAt;
 
     @Column

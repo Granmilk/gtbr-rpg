@@ -23,10 +23,14 @@ public enum CommandType {
             EDITAR_SESSAO,
             FECHAR_SESSAO,
             ENTRAR_SESSAO,
-            SAIR_SESSAO),
+            SAIR_SESSAO,
+            INICIAR_SESSAO,
+            FINALIZAR_SESSAO,
+            EDITAR_SESSAO),
 
     REQUEST(ACEITAR_REQUISICAO,
-            REJEITAR_REQUISICAO);
+            REJEITAR_REQUISICAO),
+    HELP(AJUDA);
 
     private String[] commands;
 
