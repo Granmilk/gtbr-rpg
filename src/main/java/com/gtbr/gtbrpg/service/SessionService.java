@@ -134,16 +134,16 @@ public class SessionService {
         List<Session> registeredSessions = new ArrayList<>();
 
         if (soloSession.isEmpty()) {
-            Session availableSessionsBySessionType = sessionRepository.findAvailableSessionsBySessionType(SessionType.SOLO);
+            List<Session> availableSessionsBySessionType = sessionRepository.findAvailableSessionsBySessionType(SessionType.SOLO);
             if (Objects.nonNull(availableSessionsBySessionType))
-                availableSessions.add(availableSessionsBySessionType);
+                availableSessions.addAll(availableSessionsBySessionType);
         } else
             registeredSessions.add(soloSession.get());
 
         if (groupSession.isEmpty()) {
-            Session availableSessionsBySessionType = sessionRepository.findAvailableSessionsBySessionType(SessionType.GROUP);
+            List<Session> availableSessionsBySessionType = sessionRepository.findAvailableSessionsBySessionType(SessionType.GROUP);
             if (Objects.nonNull(availableSessionsBySessionType))
-                availableSessions.add(availableSessionsBySessionType);
+                availableSessions.addAll(availableSessionsBySessionType);
         } else
             registeredSessions.add(groupSession.get());
 
