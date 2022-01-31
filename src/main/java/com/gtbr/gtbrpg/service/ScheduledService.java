@@ -8,6 +8,7 @@ import com.gtbr.gtbrpg.domain.configurations.requests.utils.RequestBuildParamete
 import com.gtbr.gtbrpg.domain.entity.Request;
 import com.gtbr.gtbrpg.domain.enums.RequestStatus;
 import com.gtbr.gtbrpg.domain.enums.RequestType;
+import com.gtbr.gtbrpg.repository.ConfigurationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
@@ -15,6 +16,11 @@ import org.json.JSONObject;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -27,6 +33,7 @@ public class ScheduledService {
 
     private final RequestService requestService;
     private final SessionService sessionService;
+    private final ConfigurationRepository configurationRepository;
 
     @Scheduled(fixedDelay = 30000)
     public void processRequests() {
@@ -154,7 +161,26 @@ public class ScheduledService {
                 }
             }
         });
+    }
 
-
+    @Scheduled(fixedDelay = 60000*25)
+    public void sleepControl() {
+        configurationRepository.findById("CAN_SLEEP").ifPresentOrElse(configuration -> {
+            if(Boolean.valueOf(configuration.getParameters()).equals(Boolean.FALSE)){
+                HttpClient httpClient = HttpClient
+                        .newHttpClient();
+                try {
+                    httpClient.send(HttpRequest
+                            .newBuilder()
+                            .GET()
+                            .uri(URI.create("https://gtbr-rpg.herokuapp.com").normalize())
+                            .build(), HttpResponse.BodyHandlers.discarding());
+                } catch (Exception e) {
+                    log.info("Error to make a request {}", e.getMessage());
+                }
+            }
+        }, () -> {
+            log.info("Missing CAN_SLEEP config");
+        });
     }
 }

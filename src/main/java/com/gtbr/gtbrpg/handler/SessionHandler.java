@@ -88,7 +88,7 @@ public class SessionHandler implements CommandTypeHandler {
                         });
                         threadChannel.sendMessage("Sejam bem vindos a sessao MUAHAHAHAHA").queue();
                         EmbedBuilder sessionEmbbed = MessageUtil.buildEmbedSessionMessage(session);
-                        EmbedBuilder groupEmbbed = MessageUtil.buildEmbedGroupMessage(group, threadChannel.getJDA());
+                        EmbedBuilder groupEmbbed = MessageUtil.buildEmbedGroupMessage(group, session, threadChannel.getJDA());
 
                         threadChannel.sendMessageEmbeds(sessionEmbbed.build(), groupEmbbed.build()).queue();
                     } else {

@@ -100,8 +100,13 @@ public class GroupService {
 
     public Request requestJoinGroup(String groupId, String issuerId) {
         GroupPlayerDto group = findGroupById(MessageUtil.hasRequestObservation(groupId)
-                ? Integer.valueOf(groupId.trim().split(" ")[0])
-                : Integer.valueOf(groupId));
+                ? Integer.valueOf(groupId.trim().replace("#", "").split(" ")[0])
+                : Integer.valueOf(groupId.replace("#", "")));
+
+        GroupPlayerDto groupPlayerDto = findGroupByPlayer(issuerId);
+
+        if (Objects.nonNull(groupPlayerDto.group()))
+            throw new RuntimeException("Nao e possivel solicitar a entrada em um grupo ja estando em um, saia do grupo atual para entrar em outro");
 
         return requestService.register(Request.builder()
                 .processIfStatus(RequestStatus.SEM_RESPOSTA)

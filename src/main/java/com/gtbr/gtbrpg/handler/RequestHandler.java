@@ -9,6 +9,7 @@ import com.gtbr.gtbrpg.domain.enums.RequestStatus;
 import com.gtbr.gtbrpg.service.GroupService;
 import com.gtbr.gtbrpg.service.MessageService;
 import com.gtbr.gtbrpg.service.RequestService;
+import com.gtbr.gtbrpg.service.SessionService;
 import com.gtbr.gtbrpg.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,6 +30,7 @@ public class RequestHandler implements CommandTypeHandler{
 
     public final RequestService requestService;
     public final GroupService groupService;
+    public final SessionService sessionService;
 
     @Override
     public void handle(String command, Message message) {
@@ -48,7 +50,7 @@ public class RequestHandler implements CommandTypeHandler{
         String requestId = MessageUtil.removePrefixAndCommand(message).trim().replace("#", "");
         Request request = requestService.update(Integer.valueOf(requestId), RequestStatus.ACEITA);
         GroupPlayerDto groupPlayerDto = groupService.acceptGroupInvite(request);
-        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
+        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, sessionService.findSessionByGroup(groupPlayerDto.group().getGroupId()), message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 

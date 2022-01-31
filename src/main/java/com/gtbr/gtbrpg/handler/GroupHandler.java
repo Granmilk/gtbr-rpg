@@ -4,6 +4,7 @@ import com.gtbr.gtbrpg.domain.dto.GroupPlayerDto;
 import com.gtbr.gtbrpg.domain.entity.GroupPlayer;
 import com.gtbr.gtbrpg.service.GroupService;
 import com.gtbr.gtbrpg.service.MessageService;
+import com.gtbr.gtbrpg.service.SessionService;
 import com.gtbr.gtbrpg.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,6 +28,7 @@ import static com.gtbr.gtbrpg.util.MessageUtil.replaceEmote;
 public class GroupHandler implements CommandTypeHandler{
 
     public final GroupService groupService;
+    public final SessionService sessionService;
 
     @Override
     public void handle(String command, Message message){
@@ -68,7 +70,7 @@ public class GroupHandler implements CommandTypeHandler{
 
     private void handleFindMyGroup(Message message) {
         GroupPlayerDto groupPlayerDto = groupService.findGroupByPlayer(message.getAuthor().getId());
-        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
+        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, sessionService.findSessionByGroup(groupPlayerDto.group().getGroupId()), message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 
@@ -126,14 +128,14 @@ public class GroupHandler implements CommandTypeHandler{
 
     private void handleUpdateGroup(Message message) {
         GroupPlayerDto groupPlayerDto = groupService.updateGroup(message.getAuthor().getId(), MessageUtil.getParamatersMap(message, MessageUtil.getCommandOfMessage(message)));
-        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
+        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, sessionService.findSessionByGroup(groupPlayerDto.group().getGroupId()), message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 
     private void handleFindGroup(Message message) {
         String groupId = message.getContentRaw().trim().replace("*" + MessageUtil.getCommandOfMessage(message), "").split(" ")[1];
         GroupPlayerDto groupPlayerDto = groupService.findGroupById(Integer.valueOf(groupId));
-        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
+        EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, sessionService.findSessionByGroup(groupPlayerDto.group().getGroupId()), message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
 
@@ -146,7 +148,7 @@ public class GroupHandler implements CommandTypeHandler{
                 .setColor(Color.red)
                 .setPermissions(List.of(Permission.EMPTY_PERMISSIONS)).queue(role -> {
                     message.getGuild().addRoleToMember(message.getMember().getId(), role).queue();
-                    EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, message.getJDA());
+                    EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, sessionService.findSessionByGroup(groupPlayerDto.group().getGroupId()), message.getJDA());
                     MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
                     groupService.addRoleId(groupPlayerDto.group().getGroupId(), role.getId());
                 });

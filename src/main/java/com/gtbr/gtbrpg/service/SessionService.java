@@ -273,4 +273,8 @@ public class SessionService {
             throw new RuntimeException("Sessao inexistente");
         });
     }
+
+    public Session findSessionByGroup(Integer groupId) {
+        return sessionRepository.findSessionByGroupId(groupId).orElse(null);
+    }
 }

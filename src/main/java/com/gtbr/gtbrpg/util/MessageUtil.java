@@ -61,13 +61,23 @@ public class MessageUtil {
     }
 
 
-    public static EmbedBuilder buildEmbedGroupMessage(GroupPlayerDto groupPlayerDto, JDA jda) {
+    public static EmbedBuilder buildEmbedGroupMessage(GroupPlayerDto groupPlayerDto, Session session, JDA jda) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setTitle(groupPlayerDto.group().getName())
                 .setDescription(groupPlayerDto.group().getDescription())
                 .setColor(Color.MAGENTA)
                 .setThumbnail(groupPlayerDto.group().getThumbnail())
-                .setFooter("Preenchimento: " + String.format("(%s/%s)", groupPlayerDto.playerList().size(), groupPlayerDto.group().getSize()))
+                .setFooter("Preenchimento: " + String.format("(%s/%s)", groupPlayerDto.playerList().size(), groupPlayerDto.group().getSize()));
+
+        if (Objects.nonNull(session))
+            embedBuilder.addField("Sessao", String.format("```Titulo: %s %nId: #%s%nData: %s%nHorario: %s```",
+                    session.getTitle(),
+                    session.getSessionId().toString(),
+                    session.getScheduledTo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                    session.getScheduledTo().format(DateTimeFormatter.ofPattern("HH:mm"))), true);
+
+                embedBuilder.addBlankField(true)
+                .addField("Instrucoes:", "Para solicitar sua entrada no grupo digite `*EntrarGrupo #"+groupPlayerDto.group().getGroupId()+"`", true)
                 .addBlankField(false);
 
         groupPlayerDto.playerList().forEach(player -> {
