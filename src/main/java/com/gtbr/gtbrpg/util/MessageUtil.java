@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
@@ -20,23 +22,30 @@ import java.util.stream.Collectors;
 import static com.gtbr.gtbrpg.util.Constants.*;
 import static com.gtbr.gtbrpg.util.GeneralUtils.in;
 
+@Component
 public class MessageUtil {
 
+    private static String prefix;
+
+    private MessageUtil(@Value("${configuration.prefix}") String prefix){
+        this.prefix = prefix;
+    }
+
     public static boolean hasPrefix(String contentRaw) {
-        return contentRaw.startsWith("*");
+        return contentRaw.startsWith(prefix);
     }
 
     public static String getCommandOfMessage(Message message) {
         return message.getContentRaw()
                 .trim()
-                .replace("*", "")
+                .replace(prefix, "")
                 .split(" ")[0];
     }
 
     public static String removePrefixAndCommand(Message message) {
         return message.getContentRaw()
                 .trim()
-                .replace("*" + getCommandOfMessage(message), "");
+                .replace(prefix + getCommandOfMessage(message), "");
     }
 
     public static void hasPermission(Player userRequest, List<Player> authorizedUsers, boolean masterByPass) {
@@ -147,7 +156,7 @@ public class MessageUtil {
 
     public static String getCommandWithId(Message message) {
         String[] strings = message.getContentRaw().split(" ");
-        return strings[0] + " " + strings[1];
+        return strings[0] + " " + (strings[1].contains(prefix) ? strings[1].replace(prefix, "") : strings[1]);
     }
 
     public static List<MessageEmbed> buildEmbedHelpMessage() {

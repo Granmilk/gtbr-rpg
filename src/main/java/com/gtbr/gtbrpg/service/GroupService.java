@@ -12,6 +12,7 @@ import com.gtbr.gtbrpg.domain.entity.Player;
 import com.gtbr.gtbrpg.domain.entity.Request;
 import com.gtbr.gtbrpg.domain.enums.RequestStatus;
 import com.gtbr.gtbrpg.domain.enums.RequestType;
+import com.gtbr.gtbrpg.exception.GroupPlayerException;
 import com.gtbr.gtbrpg.repository.ConfigurationRepository;
 import com.gtbr.gtbrpg.repository.GroupPlayerRepository;
 import com.gtbr.gtbrpg.repository.GroupRepository;
@@ -20,6 +21,7 @@ import com.gtbr.gtbrpg.util.MessageUtil;
 import com.gtbr.gtbrpg.util.ParameterUtils;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.User;
+import org.apache.logging.log4j.util.Strings;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -99,20 +101,24 @@ public class GroupService {
     }
 
     public Request requestJoinGroup(String groupId, String issuerId) {
-        GroupPlayerDto group = findGroupById(MessageUtil.hasRequestObservation(groupId)
+        Integer groupIdInteger = (MessageUtil.hasRequestObservation(groupId)
                 ? Integer.valueOf(groupId.trim().replace("#", "").split(" ")[0])
                 : Integer.valueOf(groupId.replace("#", "")));
 
-        GroupPlayerDto groupPlayerDto = findGroupByPlayer(issuerId);
+        GroupPlayerDto group = findGroupById(groupIdInteger);
 
-        if (Objects.nonNull(groupPlayerDto.group()))
+        GroupPlayerDto groupPlayerDto = null;
+        try {
+            groupPlayerDto = findGroupByPlayer(issuerId);
+        } catch (GroupPlayerException ignored) {
+        }
+
+        if (Objects.nonNull(groupPlayerDto))
             throw new RuntimeException("Nao e possivel solicitar a entrada em um grupo ja estando em um, saia do grupo atual para entrar em outro");
 
         return requestService.register(Request.builder()
                 .processIfStatus(RequestStatus.SEM_RESPOSTA)
-                .playerObservation(MessageUtil.hasRequestObservation(groupId)
-                        ? groupId.trim().split(" ")[1]
-                        : "")
+                .playerObservation(Strings.EMPTY)
                 .requestType(RequestType.SUBSCRIBE)
                 .requestStatus(RequestStatus.SEM_RESPOSTA)
                 .requestParameter(new JSONObject(SubscribeRequestParameters.builder()
@@ -211,7 +217,7 @@ public class GroupService {
 
     public GroupPlayerDto findGroupByPlayer(String discordId) {
         GroupPlayer groupPlayer = groupPlayerRepository.findActualGroupByPlayerId(playerService.getPlayerByDiscordId(discordId).getPlayerId()).orElseThrow(() -> {
-            throw new RuntimeException("Voce nao esta em nenhum grupo!");
+            throw new GroupPlayerException("Voce nao esta em nenhum grupo!");
         });
 
         return findGroupById(groupPlayer.getGroup().getGroupId());
@@ -298,5 +304,9 @@ public class GroupService {
         group.setRoleId(roleId);
 
         return groupRepository.save(group);
+    }
+
+    public List<GroupPlayerDto> findAvailableGroups() {
+        return groupRepository.findAvailableGroups().stream().map(group -> findGroupById(group.getGroupId())).toList();
     }
 }

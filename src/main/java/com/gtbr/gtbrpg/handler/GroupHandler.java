@@ -65,7 +65,17 @@ public class GroupHandler implements CommandTypeHandler{
                 handleInviteGroup(message);
                 replaceEmote(message, RELOADING_EMOJI_CODE, DONE_EMOJI_CODE);
             }
+            case LISTAR_GRUPOS -> {
+                handleListAllGroups(message);
+                replaceEmote(message, RELOADING_EMOJI_CODE, DONE_EMOJI_CODE);
+            }
         }
+    }
+
+    private void handleListAllGroups(Message message) {
+        groupService.findAvailableGroups().forEach(groupPlayerDto -> {
+            message.getChannel().sendMessageEmbeds(buildEmbedGroupMessage(groupPlayerDto, sessionService.findSessionByGroup(groupPlayerDto.group().getGroupId()), message.getJDA()).build()).queue();
+        });
     }
 
     private void handleFindMyGroup(Message message) {

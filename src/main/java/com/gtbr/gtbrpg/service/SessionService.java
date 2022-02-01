@@ -67,6 +67,10 @@ public class SessionService {
     }
 
     private Session buildSessionByParameters(Map<String, Object> parameterMap) {
+        boolean canList = true;
+        if (parameterMap.containsKey("podeConsultar") && String.valueOf(parameterMap.get("podeConsultar")).equalsIgnoreCase("false"))
+            canList = false;
+
         return Session.builder()
                 .title((String) parameterMap.get("titulo"))
                 .description((String) parameterMap.get("descricao"))
@@ -74,8 +78,7 @@ public class SessionService {
                 .sessionType(parameterMap.containsKey("tipo") ? SessionType.valueOf((String) parameterMap.get("tipo")) : null)
                 .sessionStatus(Status.builder().id(1).build())
                 .thumbnail((String) parameterMap.get("thumbnail"))
-                .canList(parameterMap.containsKey("podeConsultar")
-                        ?  Boolean.valueOf(parameterMap.get("podeConsultar").toString().toLowerCase()) : Boolean.TRUE)
+                .canList(canList)
                 .build();
     }
 
@@ -148,6 +151,10 @@ public class SessionService {
             registeredSessions.add(groupSession.get());
 
         return new SessionRecord(registeredSessions, availableSessions);
+    }
+
+    public List<Session> findAvailableSessions(){
+        return sessionRepository.findAvailableSessions();
     }
 
     public Session joinSession(Integer sessionId, String discordId) {

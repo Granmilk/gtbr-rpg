@@ -31,6 +31,10 @@ public class SessionHandler implements CommandTypeHandler {
                 handleMySession(message);
                 addDefaultReaction(message);
             }
+            case LISTAR_SESSOES -> {
+                handleFindAvailableSessions(message);
+                addDefaultReaction(message);
+            }
             case CRIAR_SESSAO -> {
                 handleCreateSession(message);
                 addDefaultReaction(message);
@@ -60,6 +64,12 @@ public class SessionHandler implements CommandTypeHandler {
                 addDefaultReaction(message);
             }
         }
+    }
+
+    private void handleFindAvailableSessions(Message message) {
+        sessionService.findAvailableSessions().forEach(session -> {
+            message.getChannel().sendMessageEmbeds(MessageUtil.buildEmbedSessionMessage(session).build()).queue();
+        });
     }
 
     private void handleFind(Message message) {
@@ -110,7 +120,7 @@ public class SessionHandler implements CommandTypeHandler {
 
     private void handleUpdate(Message message) {
         Session session = sessionService.updateSession(
-                MessageUtil.getParamatersMap(message, MessageUtil.getCommandWithId(message).replace("*", "")),
+                MessageUtil.getParamatersMap(message, MessageUtil.getCommandWithId(message)),
                 message.getAuthor().getId(),
                 MessageUtil.getDeafaultIdNumberFromMessage(message));
         EmbedBuilder embedBuilder = MessageUtil.buildEmbedSessionMessage(session);

@@ -8,6 +8,7 @@ public abstract class Constants {
     public static final String ORDEM_DE_INICIATIVA = "INICIATIVA";
 
     public static final String MEU_GRUPO = "GRUPO";
+    public static final String LISTAR_GRUPOS = "LISTARGRUPOS";
     public static final String VER_GRUPO = "CONSULTARGRUPO";
     public static final String CRIAR_GRUPO = "CRIARGRUPO";
     public static final String EDITAR_GRUPO = "EDITARGRUPO";
@@ -17,6 +18,7 @@ public abstract class Constants {
     public static final String CONVIDAR_GRUPO = "CONVIDARGRUPO";
 
     public static final String MINHA_SESSAO = "SESSAO";
+    public static final String LISTAR_SESSOES = "LISTARSESSOES";
     public static final String CONSULTAR_SESSAO = "CONSULTARSESSAO";
     public static final String CRIAR_SESSAO = "CRIARSESSAO";
     public static final String EDITAR_SESSAO = "EDITARSESSAO";

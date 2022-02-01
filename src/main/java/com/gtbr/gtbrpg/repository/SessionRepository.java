@@ -22,6 +22,11 @@ public interface SessionRepository extends CrudRepository<Session, Integer> {
 
     @Query("select s from Session s " +
             "where s.canList = true and s.finished is null " +
+            "and s.started is null and s.sessionStatus.id = 1 ")
+    List<Session> findAvailableSessions();
+
+    @Query("select s from Session s " +
+            "where s.canList = true and s.finished is null " +
             "and s.sessionStatus.id = 1 and s.sessionType = 'SOLO' " +
             "and s.player.playerId = :playerId")
     Optional<Session> findSessionByPlayerId(Integer playerId);

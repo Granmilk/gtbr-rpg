@@ -9,6 +9,7 @@ import static com.gtbr.gtbrpg.util.Constants.*;
 @Getter
 public enum CommandType {
     GROUP(MEU_GRUPO,
+            LISTAR_GRUPOS,
             VER_GRUPO,
             CRIAR_GRUPO,
             EDITAR_GRUPO,
@@ -18,6 +19,7 @@ public enum CommandType {
             CONVIDAR_GRUPO),
 
     SESSION(MINHA_SESSAO,
+            LISTAR_SESSOES,
             CONSULTAR_SESSAO,
             CRIAR_SESSAO,
             EDITAR_SESSAO,
