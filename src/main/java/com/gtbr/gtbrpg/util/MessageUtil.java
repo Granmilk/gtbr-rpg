@@ -54,7 +54,7 @@ public class MessageUtil {
     }
 
     public static Map<String, Object> getParamatersMap(Message message, String command) {
-        String allParametersInline = message.getContentRaw().trim().replace(prefix + command, "").trim();
+        String allParametersInline = message.getContentRaw().trim().replace(command, "").trim();
         String[] parameters = allParametersInline.contains(",") ? allParametersInline.split(",") : new String[]{allParametersInline};
         Map<String, Object> mapParameter = new HashMap<>();
 
