@@ -27,7 +27,7 @@ public class MessageUtil {
 
     private static String prefix;
 
-    private MessageUtil(@Value("${configuration.prefix}") String prefix){
+    private MessageUtil(@Value("${configuration.prefix}") String prefix) {
         this.prefix = prefix;
     }
 
@@ -54,7 +54,8 @@ public class MessageUtil {
     }
 
     public static Map<String, Object> getParamatersMap(Message message, String command) {
-        String[] parameters = message.getContentRaw().trim().replace("*" + command, "").split(",");
+        String[] parameters = message.getContentRaw().trim().replace(prefix + command, "").split(",");
+        parameters[0] = parameters[0].split(" ")[1];
         Map<String, Object> mapParameter = new HashMap<>();
 
         for (String parameter : parameters) {
@@ -85,8 +86,8 @@ public class MessageUtil {
                     session.getScheduledTo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                     session.getScheduledTo().format(DateTimeFormatter.ofPattern("HH:mm"))), true);
 
-                embedBuilder.addBlankField(true)
-                .addField("Instrucoes:", "Para solicitar sua entrada no grupo digite `*EntrarGrupo #"+groupPlayerDto.group().getGroupId()+"`", true)
+        embedBuilder.addBlankField(true)
+                .addField("Instrucoes:", "Para solicitar sua entrada no grupo digite `*EntrarGrupo #" + groupPlayerDto.group().getGroupId() + "`", true)
                 .addBlankField(false);
 
         groupPlayerDto.playerList().forEach(player -> {
@@ -113,7 +114,7 @@ public class MessageUtil {
                 .setColor(Color.MAGENTA)
                 .setTitle(session.getTitle())
                 .setDescription(session.getDescription())
-                .setFooter(session.getSessionStatus().getName()+" - " + (session.getSessionStatus().getId().equals(1) ? "\uD83D\uDFE2" : "\uD83D\uDD34"))
+                .setFooter(session.getSessionStatus().getName() + " - " + (session.getSessionStatus().getId().equals(1) ? "\uD83D\uDFE2" : "\uD83D\uDD34"))
                 .setImage(session.getThumbnail());
         switch (session.getSessionType()) {
             case SOLO -> {
@@ -135,10 +136,10 @@ public class MessageUtil {
 
         if (Objects.nonNull(session.getStarted())) {
             embedBuilder.addField("Esta sessaão foi iniciada em",
-                    session.getStarted().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm")),true);
+                    session.getStarted().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm")), true);
             if (Objects.nonNull(session.getFinished()))
                 embedBuilder.addField("Esta sessaão foi finalizada em",
-                        session.getFinished().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm")),true);
+                        session.getFinished().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm")), true);
         }
 
         embedBuilder
