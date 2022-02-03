@@ -7,8 +7,11 @@ import com.gtbr.gtbrpg.domain.enums.SessionType;
 import com.gtbr.gtbrpg.service.GroupService;
 import com.gtbr.gtbrpg.service.SessionService;
 import com.gtbr.gtbrpg.util.MessageUtil;
+import com.gtbr.gtbrpg.util.SpringContext;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +81,10 @@ public class SessionHandler implements CommandTypeHandler {
 
     private void handleFinish(Message message) {
         Session session = sessionService.finish(MessageUtil.getDeafaultIdNumberFromMessage(message), message.getAuthor().getId());
+
+        GroupHandler groupHandler = SpringContext.getBean(GroupHandler.class);
+        groupHandler.handle(FECHAR_GRUPO, message);
+
         message.getJDA().getGuilds().get(0).getThreadChannelById(session.getThreadId()).sendMessage("Sessao finalizada!").queue();
         message.getJDA().getGuilds().get(0).getThreadChannelById(session.getThreadId()).getManager().setArchived(true).queue();
     }
@@ -160,7 +167,7 @@ public class SessionHandler implements CommandTypeHandler {
     }
 
     private void handleCreateSession(Message message) {
-        Session session = sessionService.createSession(MessageUtil.getParamatersMap(message, MessageUtil.getCommandOfMessage(message)), message.getAuthor().getId());
+        Session session = sessionService.createSession(MessageUtil.getParamatersMap(message, MessageUtil.getCommandOfMessageWithPrefix(message)), message.getAuthor().getId());
         EmbedBuilder embedBuilder = MessageUtil.buildEmbedSessionMessage(session);
         message.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
     }

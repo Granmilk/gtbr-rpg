@@ -117,7 +117,7 @@ public class GroupHandler implements CommandTypeHandler{
     private void handleCloseGroup(Message message) {
         GroupPlayerDto groupPlayerDto = groupService.closeGroup(message.getAuthor().getId());
         EmbedBuilder embedBuilder = new EmbedBuilder()
-                .setTitle("Grupo fechado " + groupPlayerDto.group().getName())
+                .setTitle("Grupo [" + groupPlayerDto.group().getName() + "] fechado")
                 .setDescription("Este grupo agora encontra-se fechado e todos seus jogadores foram liberados!")
                 .setColor(Color.green)
                 .setThumbnail(groupPlayerDto.group().getThumbnail())
@@ -137,7 +137,7 @@ public class GroupHandler implements CommandTypeHandler{
     }
 
     private void handleUpdateGroup(Message message) {
-        GroupPlayerDto groupPlayerDto = groupService.updateGroup(message.getAuthor().getId(), MessageUtil.getParamatersMap(message, MessageUtil.getCommandOfMessage(message)));
+        GroupPlayerDto groupPlayerDto = groupService.updateGroup(message.getAuthor().getId(), MessageUtil.getParamatersMap(message, MessageUtil.getCommandOfMessageWithPrefix(message)));
         EmbedBuilder embedBuilder = buildEmbedGroupMessage(groupPlayerDto, sessionService.findSessionByGroup(groupPlayerDto.group().getGroupId()), message.getJDA());
         MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
     }
@@ -150,7 +150,7 @@ public class GroupHandler implements CommandTypeHandler{
     }
 
     private void handleCreateGroup(Message message) {
-        GroupPlayerDto groupPlayerDto = groupService.createGroup(MessageUtil.getParamatersMap(message, MessageUtil.getCommandOfMessage(message)), message.getAuthor().getId());
+        GroupPlayerDto groupPlayerDto = groupService.createGroup(MessageUtil.getParamatersMap(message, MessageUtil.getCommandOfMessageWithPrefix(message)), message.getAuthor().getId());
         message.getGuild()
                 .createRole()
                 .setMentionable(true)

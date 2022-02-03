@@ -42,6 +42,12 @@ public class MessageUtil {
                 .split(" ")[0];
     }
 
+    public static String getCommandOfMessageWithPrefix(Message message) {
+        return message.getContentRaw()
+                .trim()
+                .split(" ")[0];
+    }
+
     public static String removePrefixAndCommand(Message message) {
         return message.getContentRaw()
                 .trim()
@@ -85,6 +91,8 @@ public class MessageUtil {
                     session.getSessionId().toString(),
                     session.getScheduledTo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                     session.getScheduledTo().format(DateTimeFormatter.ofPattern("HH:mm"))), true);
+        else
+            embedBuilder.addField("Sessao", "`Sem sessao vinculada`", true);
 
         embedBuilder.addBlankField(true)
                 .addField("Instrucoes:", "Para solicitar sua entrada no grupo digite `*EntrarGrupo #" + groupPlayerDto.group().getGroupId() + "`", true)

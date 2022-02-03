@@ -237,6 +237,7 @@ public class SessionService {
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> {
             throw new RuntimeException("Sessao inexistente");
         });
+        if (Objects.nonNull(session.getFinished())) throw new RuntimeException("Esta sessao ja foi finalizada e nao pode ser reaberta");
 
         if (Objects.nonNull(session.getStarted())) throw new RuntimeException("Sessao ja iniciada");
 
@@ -263,6 +264,7 @@ public class SessionService {
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> {
             throw new RuntimeException("Sessao inexistente");
         });
+        if (Objects.isNull(session.getStarted())) throw new RuntimeException("Somente sessoes inicializadas podem ser finalizadas");
 
         if (Objects.nonNull(session.getFinished())) throw new RuntimeException("Sessao ja finalizada");
 

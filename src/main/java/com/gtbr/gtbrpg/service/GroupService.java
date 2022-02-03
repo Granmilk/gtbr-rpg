@@ -228,8 +228,21 @@ public class GroupService {
         GroupPlayer groupPlayer = groupPlayerRepository.findActualGroupByPlayerId(player.getPlayerId()).orElseThrow(() -> {
             throw new RuntimeException("Voce não está em nenhum grupo!");
         });
+        List<Player> allPlayersByGroup = groupRepository.findAllPlayersByGroup(groupPlayer.getGroup().getGroupId());
 
         groupPlayer.setLeaveAt(LocalDateTime.now());
+
+        if (groupPlayer.getGroup().getLeader().getDiscordId().equals(player.getDiscordId()) && allPlayersByGroup.size() <= 1)
+            closeGroup(groupPlayer.getGroup().getLeader().getDiscordId());
+        else {
+            Group group = groupPlayer.getGroup();
+            group.setLeader(allPlayersByGroup.stream()
+                    .filter(playerObject -> !playerObject.getDiscordId().equals(group.getLeader().getDiscordId()))
+                    .toList()
+                    .get(0));
+
+            groupRepository.save(groupPlayer.getGroup());
+        }
 
         return groupPlayerRepository.save(groupPlayer);
     }

@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface GroupPlayerRepository extends CrudRepository<GroupPlayer, Integer> {
 
-    @Query("select gp from GroupPlayer gp where gp.group.groupId = :groupId")
+    @Query("select gp from GroupPlayer gp where gp.group.groupId = :groupId and gp.leaveAt is null")
     List<GroupPlayer> findByGroupId(Integer groupId);
 
     @Query("select gp from GroupPlayer gp where gp.player.playerId = :playerId")
