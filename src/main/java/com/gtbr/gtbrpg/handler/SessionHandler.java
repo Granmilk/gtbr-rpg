@@ -8,14 +8,11 @@ import com.gtbr.gtbrpg.service.GroupService;
 import com.gtbr.gtbrpg.service.MessageService;
 import com.gtbr.gtbrpg.service.SessionService;
 import com.gtbr.gtbrpg.util.MessageUtil;
-import com.gtbr.gtbrpg.util.SpringContext;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.RichPresence;
-import net.dv8tion.jda.api.managers.Presence;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -88,25 +85,28 @@ public class SessionHandler implements CommandTypeHandler {
     private void handleFinish(Message message) {
         Session session = sessionService.finish(MessageUtil.getDeafaultIdNumberFromMessage(message), message.getAuthor().getId());
 
-        GroupPlayerDto groupPlayerDto = groupService.closeGroup(message.getAuthor().getId());
-        EmbedBuilder embedBuilder = new EmbedBuilder()
-                .setTitle("Grupo [" + groupPlayerDto.group().getName() + "] fechado")
-                .setDescription("Este grupo agora encontra-se fechado e todos seus jogadores foram liberados!")
-                .setColor(Color.green)
-                .setThumbnail(groupPlayerDto.group().getThumbnail())
-                .setFooter("Grupo fechado em: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy - HH:mm")))
-                .addBlankField(false);
+        if(session.getSessionType().equals(SessionType.GROUP)) {
+            GroupPlayerDto groupPlayerDto = groupService.closeGroup(message.getAuthor().getId());
+            EmbedBuilder embedBuilder = new EmbedBuilder()
+                    .setTitle("Grupo [" + groupPlayerDto.group().getName() + "] fechado")
+                    .setDescription("Este grupo agora encontra-se fechado e todos seus jogadores foram liberados!")
+                    .setColor(Color.green)
+                    .setThumbnail(groupPlayerDto.group().getThumbnail())
+                    .setFooter("Grupo fechado em: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yy - HH:mm")))
+                    .addBlankField(false);
 
-        groupPlayerDto.playerList().forEach(player -> {
-            embedBuilder.addField("Membro: ", message.getJDA().getUserById(player.getDiscordId()).getAsMention() +
-                            (Objects.equals(groupPlayerDto.group().getLeader().getDiscordId(), player.getDiscordId()) ? " " + CROWN_EMOJI_CODE : ""),
-                    true);
-            message.getJDA().getUserById(player.getDiscordId()).openPrivateChannel().queue(privateChannel -> {
-                privateChannel.sendMessage(String.format("O Grupo `%s` que você fazia parte foi fechado e você está livre para ingressar em um novo grupo!", groupPlayerDto.group().getName())).queue();
+            groupPlayerDto.playerList().forEach(player -> {
+                embedBuilder.addField("Membro: ", message.getJDA().getUserById(player.getDiscordId()).getAsMention() +
+                                (Objects.equals(groupPlayerDto.group().getLeader().getDiscordId(), player.getDiscordId()) ? " " + CROWN_EMOJI_CODE : ""),
+                        true);
+                message.getJDA().getUserById(player.getDiscordId()).openPrivateChannel().queue(privateChannel -> {
+                    privateChannel.sendMessage(String.format("O Grupo `%s` que você fazia parte foi fechado e você está livre para ingressar em um novo grupo!", groupPlayerDto.group().getName())).queue();
+                });
             });
-        });
-        message.getGuild().getRoleById(groupPlayerDto.group().getRoleId()).delete().queue();
-        MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
+
+            message.getGuild().getRoleById(groupPlayerDto.group().getRoleId()).delete().queue();
+            MessageService.sendEmbbedMessage(message.getChannel(), embedBuilder);
+        }
 
         message.getJDA().getGuilds().get(0).getThreadChannelById(session.getThreadId()).sendMessage("Sessao finalizada!").queue();
         message.getJDA().getGuilds().get(0).getThreadChannelById(session.getThreadId()).getManager().setArchived(true).queue();
