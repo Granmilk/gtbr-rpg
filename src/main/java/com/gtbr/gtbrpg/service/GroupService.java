@@ -113,7 +113,6 @@ public class GroupService {
         try {
             groupPlayerDto = findGroupByPlayer(issuerId);
         } catch (GroupPlayerException ignored) {
-
         }
 
         if (Objects.nonNull(groupPlayerDto))
@@ -156,7 +155,7 @@ public class GroupService {
                 GroupPlayerDto groupPlayerDto = findGroupById(subscribeRequestParameters.getSubscribedGroup().getGroupId());
                 if (groupPlayerDto.playerList().size() >= groupPlayerDto.group().getSize())
                     throw new RuntimeException("Grupo cheio!");
-                if (!findAllGroupsByPlayerId(subscribeRequestParameters.getIssuer().getPlayerId()).isEmpty())
+                if (findAllGroupsByPlayerId(subscribeRequestParameters.getIssuer().getPlayerId()).stream().anyMatch(groupPlayer -> Objects.isNull(groupPlayer.getLeaveAt())))
                     throw new RuntimeException("Nao e possivel estar em mais de um grupo por vez, para aceitar essa requisicao saia do outro grupo");
 
                 GroupPlayer groupPlayer = groupPlayerRepository.save(GroupPlayer.builder().group(subscribeRequestParameters.getSubscribedGroup()).player(subscribeRequestParameters.getIssuer()).build());
