@@ -96,7 +96,9 @@ public class GroupService {
     public GroupPlayerDto findGroupById(Integer groupId) {
         List<GroupPlayer> groupPlayerList = groupPlayerRepository.findByGroupId(groupId);
         return new GroupPlayerDto(groupPlayerList.get(0).getGroup(),
-                groupPlayerList.stream().map(GroupPlayer::getPlayer).collect(Collectors.toList()),
+                groupPlayerList.stream()
+                        .map(GroupPlayer::getPlayer)
+                        .toList(),
                 LocalDateTime.now());
     }
 
@@ -111,6 +113,7 @@ public class GroupService {
         try {
             groupPlayerDto = findGroupByPlayer(issuerId);
         } catch (GroupPlayerException ignored) {
+
         }
 
         if (Objects.nonNull(groupPlayerDto))
@@ -135,7 +138,7 @@ public class GroupService {
                 GroupPlayerDto groupPlayerDto = findGroupById(inviteRequestParameters.getInvitedTo().getGroupId());
                 if (groupPlayerDto.playerList().size() >= groupPlayerDto.group().getSize())
                     throw new RuntimeException("Grupo cheio!");
-                if (!findAllGroupsByPlayerId(inviteRequestParameters.getInvitedPlayer().getPlayerId()).isEmpty())
+                if (findAllGroupsByPlayerId(inviteRequestParameters.getInvitedPlayer().getPlayerId()).stream().anyMatch(groupPlayer -> Objects.isNull(groupPlayer.getLeaveAt())))
                     throw new RuntimeException("Nao e possivel estar em mais de um grupo por vez, para aceitar essa requisicao saia do outro grupo");
 
                 GroupPlayer groupPlayer = groupPlayerRepository.save(GroupPlayer.builder()
